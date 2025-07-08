@@ -40,7 +40,6 @@ export default function RootLayout({
          </SignUpButton>
             </SignedOut>
             <SignedIn>
-              <UserButton />
             </SignedIn>
             <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>

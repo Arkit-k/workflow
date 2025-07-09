@@ -2,7 +2,7 @@
 // Update the import path below to the correct location of Sidebar, for example:
 import { LayoutDashboard,Bot, Presentation, CreditCard, Plus } from "lucide-react";
 import { Button } from '../../components/ui/button'
-import { Sidebar, SidebarContent,SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenuButton, SidebarMenuItem,SidebarMenu } from "../../components/ui/sidebar";
+import { Sidebar, SidebarContent,SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenuButton, SidebarMenuItem,SidebarMenu, useSidebar } from "../../components/ui/sidebar";
 import Link from "next/link";
 import Image from 'next/image'
 import { usePathname } from "next/navigation";
@@ -52,15 +52,18 @@ const projects = [
 
 export function AppSidebar() {
       const pathname = usePathname();
+      const { open } = useSidebar()
       return (
             <>
                   <Sidebar collapsible="icon" variant="floating" >
                   <SidebarHeader>
                         <div className="flex items-center gap-2">
                               <Image src ='/logo.png' alt='logo' width={40} height={40} />
+                              { open && (
                               <h1 className="text-xl font-bold text-primary/80">
                               Workflow
                               </h1>
+                              )}
 
                         </div>
                   </SidebarHeader>
@@ -91,7 +94,7 @@ export function AppSidebar() {
                                                 <SidebarMenuItem key={item.title}>
                                                       <SidebarMenuButton asChild>
                                                             <Link href={item.url} className={cn({
-                                                                  '!bg-primary !text-white': pathname ===  item.url
+                                                                  '!bg-secondary !text-primary': pathname ===  item.url
                                                             },'list-none')}>
                                                                   <item.icon/>
                                                                   <span>{item.title}</span>
@@ -130,7 +133,7 @@ export function AppSidebar() {
                                                                   <div>
                                                                         <div
                                                                           className={cn(
-                                                                            'rounded-sm border size-6 flex items-center justify-center text-sm bg-white text-primary',
+                                                                            'rounded-sm  size-6 flex items-center justify-center text-sm bg-white text-primary',
                                                                             {
                                                                               // Highlight logic placeholder: replace 'selectedProjectId' with your actual selected project id state
                                                                               '!bg-primary !text-white': true
@@ -148,7 +151,10 @@ export function AppSidebar() {
                                                 )
                                           })}
 
+                  
+
                                           <div className="h-2 mt-4">
+                              { open && (
                                                 <SidebarMenuItem>
                                                       <Link href='/create'>
                                                 <Button variant={'outline'} className="fit">
@@ -156,6 +162,7 @@ export function AppSidebar() {
                                                       </Button>
                                                       </Link>
                                                       </SidebarMenuItem>
+                              )}
                                           </div>
                                     </SidebarMenu>
                         </SidebarGroup>

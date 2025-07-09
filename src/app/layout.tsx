@@ -1,4 +1,5 @@
 import "~/styles/globals.css";
+import {ThemeProvider} from "../components/theme-provider"
 import {
   ClerkProvider,
   SignInButton,
@@ -29,8 +30,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
         <ClerkProvider>
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
+        <ThemeProvider  attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange>
               <SignedOut>
               <SignInButton />
               <SignUpButton>
@@ -42,6 +47,7 @@ export default function RootLayout({
             <SignedIn>
             </SignedIn>
             <TRPCReactProvider>{children}</TRPCReactProvider>
+            </ThemeProvider>
       </body>
     </html>
         </ClerkProvider>

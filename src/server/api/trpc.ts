@@ -1,3 +1,4 @@
+
 /**
  * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
  * 1. You want to modify request context (see Part 1).
@@ -6,7 +7,8 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { auth } from "@clerk/nextjs/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -96,6 +98,23 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
+const isAuthentication = t.middleware(async ({ next, ctx }) => {
+  const user = await auth()
+  if (!user) {
+    throw new TRPCError({
+    code:'UNAUTHORIZED',
+    message:'you must be logged in to access this resources'
+    })
+  }
+  return next({
+    ctx:{
+      ...ctx,
+      user
+    }
+  });
+});
+
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -104,3 +123,4 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+export const protectedProcedure = t.procedure.use(isAuthentication);

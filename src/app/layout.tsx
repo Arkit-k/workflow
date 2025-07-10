@@ -1,4 +1,5 @@
 import "~/styles/globals.css";
+import { TRPCProvider } from './_trpc/Provider';
 import {ThemeProvider} from "../components/theme-provider"
 import {
   ClerkProvider,

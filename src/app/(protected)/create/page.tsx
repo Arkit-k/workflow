@@ -1,7 +1,11 @@
 "use client"
 import React from 'react'
+import { api } from "../../../trpc/react"
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { toast } from 'sonner'
 
 type FormInput = {
       repourl: string
@@ -12,8 +16,22 @@ type FormInput = {
 const Createpage = () => {
       
       const { register, handleSubmit, reset } = useForm<FormInput>();
+      const createProject = api.project.createProject.useMutation()
       function onSubmit(data:FormInput) {
-            window.alert(data)
+            window.alert(JSON.stringify(data, null, 2))
+            createProject.mutate({
+                  githubUrl:data.repourl,
+                  name:data.projectName,
+                  githubToken:data.githubToken
+            },{
+                  onSuccess:() =>{
+                        toast.success('project created successfully')
+                        reset()
+                  },
+                  onError: () => {
+                        toast.error('failed to create project')
+                  }
+            })
             return true
       }
       return(
@@ -28,13 +46,25 @@ const Createpage = () => {
                   <p className='text-sm text-muted-foreground'>
                         Enter the url of the Repository to link it to workflow
                   </p>
+                  <div className='h-4'></div>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                  <input  {...register('repourl',{required: true})}
-                  placeholder='ProjectName'
-                  
+                  <Input  {...register('projectName',{required: true})}
+                  placeholder='Project  Name'
                   />
-
+                  <div className='h-2'></div>
+                  <Input  {...register('repourl',{required: true})}
+                  placeholder='Repo url'
+                  />
+                  <div className='h-2'></div>
+                  <Input  {...register('githubToken')}
+                  placeholder='Github Token (optional)'
+                  />
+                  <div className='h-4 mt-3'>
+                        <Button type='submit'>
+                              Create Project
+                        </Button>
+                  </div>
             </form>
       </div>
    </div>

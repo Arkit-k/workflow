@@ -1,5 +1,4 @@
 import "~/styles/globals.css";
-import { TRPCProvider } from './_trpc/Provider';
 import {ThemeProvider} from "../components/theme-provider"
 import {
   ClerkProvider,
@@ -14,6 +13,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -48,6 +48,7 @@ export default function RootLayout({
             <SignedIn>
             </SignedIn>
             <TRPCReactProvider>{children}</TRPCReactProvider>
+            <Toaster richColors />
             </ThemeProvider>
       </body>
     </html>

@@ -1,19 +1,34 @@
-import { auth, clerkClient } from '@clerk/nextjs/server'
-import { notFound, redirect } from 'next/navigation'
-import React from 'react'
-import { db } from '~/server/db'
+'use client'
 
+import { useAuth } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
+import useProject from '~/hooks/use-project'
 
+const SyncUser = () => {
+  const { project } = useProject()
+  const { userId, isLoaded } = useAuth()
+  const router = useRouter()
 
-const SyncUser = async () => {
-      const { userId } = await auth();
-      if (!userId) {
-            // If not signed in, redirect to sign-in page
-            return redirect('/');
-      }
-      return (
-            <div><h1>we are synced</h1></div>
-      );
+  useEffect(() => {
+    if (isLoaded && !userId) {
+      router.push('/')
+    }
+  }, [isLoaded, userId, router])
+
+  if (!isLoaded) {
+    return <div>Loading...</div>
+  }
+
+  if (!userId) {
+    return null // Will redirect via useEffect
+  }
+
+  return (
+    <div>
+      <h1>{project?.name || 'No project selected'}</h1>
+    </div>
+  )
 }
 
 export default SyncUser

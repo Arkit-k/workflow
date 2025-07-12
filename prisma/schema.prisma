@@ -12,18 +12,19 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid())
+  clerkUserId String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   imageUrl  String?
   firstName String?
-  lastname  String?
+  lastName  String?  // Fixed typo
 
-  email String? @unique
+  email String @unique  // Made required
 
   credits Int @default(150)
 
-  userToProjects UserToProject[]
+  UserToProject UserToProject[]
 }
 
 model Project {
@@ -33,7 +34,7 @@ model Project {
 
   name      String
   githubUrl String
-  delatedAt DateTime?
+  deletedAt DateTime?  // Fixed typo
 
   UserToProject UserToProject[]
 }
@@ -46,8 +47,8 @@ model UserToProject {
   userId    String
   projectId String
 
-  user    User    @relation(fields: [userId], references: [id])
-  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([userId, projectId])
 }

@@ -5,34 +5,35 @@ import { db } from '~/server/db'
 
 
 const SyncUser = async () => {
-      const { userId } = await auth();
-      if (!userId) {
-            return redirect('/');
-      }
-      const client = await clerkClient();
-      const user = await client.users.getUser(userId);
-      if (!user.emailAddresses[0]?.emailAddress) {
-            return notFound();
-      }
-      // Sync user in database
-      await db.user.upsert({
-            where: {
-                  email: user.emailAddresses[0]?.emailAddress,
-            },
-            update: {
-                  imageUrl: user.imageUrl,
-                  firstName: user.firstName,
-                  lastname: user.lastName,
-            },
-            create: {
-                  id: userId,
-                  email: user.emailAddresses[0]?.emailAddress ?? "",
-                  imageUrl: user.imageUrl,
-                  firstName: user.firstName,
-            },
-      });
-      // After sign in and sync, render dashboard content
-      return redirect('/dashboard');
-}
+  const { userId } = await auth();
+  if (!userId) return redirect('/');
+
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const email = user.emailAddresses[0]?.emailAddress;
+
+  if (!email) return notFound();
+
+  // Sync user
+  const dbUser = await db.user.upsert({
+    where: { clerkUserId: userId },  // Match Clerk's ID
+    update: {
+      email,  // Update email if changed
+      imageUrl: user.imageUrl,
+      firstName: user.firstName,
+      lastName: user.lastName,  // Fixed typo
+    },
+    create: {
+      clerkUserId: userId,
+      email,
+      imageUrl: user.imageUrl,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      credits: 150,  // Default value
+    },
+  });
+
+  return dbUser;  // Or redirect if needed
+};
 
 export default SyncUser

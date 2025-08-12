@@ -11,16 +11,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id          String   @id @default(cuid())
   clerkUserId String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   imageUrl  String?
   firstName String?
-  lastName  String?  // Fixed typo
+  lastName  String? // Fixed typo
 
-  email String @unique  // Made required
+  email String @unique // Made required
 
   credits Int @default(150)
 
@@ -34,9 +34,10 @@ model Project {
 
   name      String
   githubUrl String
-  deletedAt DateTime?  // Fixed typo
+  deletedAt DateTime? // Fixed typo
 
   UserToProject UserToProject[]
+  Commit        Commit[]
 }
 
 model UserToProject {
@@ -51,4 +52,20 @@ model UserToProject {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([userId, projectId])
+}
+
+model Commit {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  commitMessage      String
+  commitHash         String
+  commitAuthorAvator String
+  commitDate         DateTime
+
+  summary String
 }
